@@ -1,0 +1,122 @@
+# Trabalho Prático I: Implementar o jogo da forca
+# Completar a seguinte informação:
+# Nome: André de Menezes Barroso Vargas
+# Matrícula: 118.083.015
+# jogoforca.py
+
+# tomadas de https://duvidas.dicio.com.br/as-15-palavras-mais-engracadas-da-lingua-portuguesa/
+# você pode incluir mais palavras na lista.
+import random
+LISTA_PALAVRAS = ('Mequetrefe' , 'Salamaleque', 'Piripaque', 'Serelepe',
+                  'Siricutico', 'Bugiganga', 'Borogodó', 'Quinquilharia',
+                  'Beleléu', 'Balacobaco', 'Faniquito', 'Quiproquó', 'Pebolim',
+                  'Ziquizira', 'Zunzunzum', 'Ziguezague')
+
+# Número máximo de tentativas.
+MAX_TENTATIVAS = 6
+
+def obter_palavra():
+    return random.choice(LISTA_PALAVRAS)
+
+def palavra_adivinhada(palavra_secreta, letras_usuario):
+    letras_da_palavra = []
+    cont_p = 0
+
+    for i in palavra_secreta:
+        i = i.lower()
+        if i not in letras_da_palavra:
+            letras_da_palavra.append(i)
+            cont_p += 1
+
+    cont_u = 0
+
+    for i in letras_da_palavra:
+        for j in letras_usuario:
+            if j == i:
+                cont_u += 1
+
+    if cont_u == cont_p:
+        return True
+    else:
+        return False
+
+def tentativas_erradas(palavra_secreta, letras_usuario):
+    letras_da_palavra = []
+
+    for i in palavra_secreta:
+        i = i.lower()
+        if i not in letras_da_palavra:
+            letras_da_palavra.append(i.lower())
+
+    cont_u = 0
+
+    for j in letras_usuario:
+        if j not in letras_da_palavra:
+            cont_u += 1
+
+    return cont_u
+
+def mostra_adivinhadas(palavra_secreta, letras_usuario):
+    palavra = " "
+
+    for i in palavra_secreta:
+        i = i.lower()
+        if i in letras_usuario:
+            palavra += " " + i + " "
+        else:
+            palavra += " _ "
+
+    print("Palavra secreta: ", palavra)
+    print("Letras tentadas: ", letras_usuario)
+
+def entra_tentativa():
+    cont = False
+
+    while cont == False:
+        letra = input("Digite uma letra: ")
+
+        if (letra.isalpha() == False or len(letra) > 1):
+            print("Formato incorreto, tentar novamente")
+        else:
+            cont = True
+
+    return letra
+
+def jogo_da_forca():
+    '''
+    Função principal do jogo.
+    '''
+
+    print('Bem vindo ao jogo da forca.')
+
+    while True:
+        palavra_secreta = obter_palavra()
+
+        letras_usuario = []
+
+        while not palavra_adivinhada(palavra_secreta, letras_usuario) and \
+              tentativas_erradas(palavra_secreta, letras_usuario) < MAX_TENTATIVAS:
+
+              mostra_adivinhadas(palavra_secreta, letras_usuario)
+
+              restantes = MAX_TENTATIVAS - tentativas_erradas(palavra_secreta, letras_usuario)
+              print('Tentativas restantes:', restantes)
+              letra = entra_tentativa()
+              letras_usuario.append(letra)
+
+        mostra_adivinhadas(palavra_secreta, letras_usuario)
+
+        if palavra_adivinhada(palavra_secreta, letras_usuario):
+            print('Parabéns, você adivinhou a palavra!')
+        else:
+            print('¯\\_(ツ)_/¯ você perdeu.')
+
+        cont = input('Entre C se deseja continuar jogando.')
+
+        if not (cont == 'C' or cont =='c'):
+            break
+
+    print('Game over.')
+
+# chamada a função principal para executar o jogo.
+jogo_da_forca()
